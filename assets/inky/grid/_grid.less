@@ -1,0 +1,194 @@
+// Foundation for Emails by ZURB
+// zurb.com/ink/
+// Licensed under MIT Open Source
+
+////
+/// @group grid
+////
+
+/// Default number of columns for an email.
+/// @type Number
+@grid-column-count: 12;
+
+/// Default padding for the bottom of a column.
+/// @type Number
+@column-padding-bottom: @global-padding;
+
+/// Default border radius for the container. Use a px value
+/// @type Number
+@container-radius: 0;
+
+//For viewing email in browser
+@media only screen {
+  html {
+    min-height: 100%;
+    background: @body-background;
+  }
+}
+
+table {
+  &.body {
+    background: @body-background;
+    height: 100%;
+    width: 100%;
+  }
+
+  &.container {
+    background: @container-background;
+    width: @global-width;
+    margin: 0 auto;
+    Margin: 0 auto;
+    text-align: inherit;
+  }
+
+  &.row {
+    padding: 0;
+    width: 100%;
+    position: relative;
+  }
+
+  &.spacer {
+    width: 100%;
+    td {
+      mso-line-height-rule: exactly;
+    }
+  }
+}
+
+table.container table.row {
+  display: table;
+}
+
+td.columns,
+td.column,
+th.columns,
+th.column {
+  margin: 0 auto;
+  Margin: 0 auto;
+  padding-left: @global-gutter;
+  padding-bottom: @column-padding-bottom;
+
+  // Prevents Nested columns from double the padding
+  .column.first,
+  .columns.first {
+    padding-left: 0 !important;
+  }
+
+  .column.last,
+  .columns.last {
+    padding-right: 0 !important;
+  }
+
+  .column,
+  .columns {
+    center {
+      min-width: none !important;
+    }
+  }
+}
+
+td.columns.last,
+td.column.last,
+th.columns.last,
+th.column.last {
+  padding-right: @global-gutter;
+}
+
+//makes sure nested tables are 100% width
+td.columns,
+td.column,
+th.columns,
+th.column {
+  table {
+    width: 100%;
+
+    &.button {
+      width:auto;
+
+      &.expand,
+      &.expanded {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.allColsGrid(@counter) when (@counter > 0) {
+  td.large-@{counter},
+  th.large-@{counter} {
+    width: -zf-grid-calc-px(@counter, @grid-column-count, @global-width, @global-gutter);
+    padding-left: @global-gutter / 2;
+    padding-right: @global-gutter / 2;
+  }
+
+  td.large-@{counter}.first,
+  th.large-@{counter}.first {
+    padding-left: @global-gutter;
+  }
+
+  td.large-@{counter}.last,
+  th.large-@{counter}.last {
+    padding-right: @global-gutter;
+  }
+
+  //Collapsed logic
+  .collapse {
+    > tbody > tr > td.large-@{counter},
+    > tbody > tr > th.large-@{counter} {
+      padding-right: 0;
+      padding-left: 0;
+      width: -zf-grid-calc-px(@counter, @grid-column-count, @global-width, @global-gutter) + @global-gutter;
+    }
+
+    //Gotta give it that extra love for the first and last columns.
+    td.large-@{counter}.first,
+    th.large-@{counter}.first,
+    td.large-@{counter}.last,
+    th.large-@{counter}.last {
+      width: -zf-grid-calc-px(@counter, @grid-column-count, @global-width, @global-gutter) + (@global-gutter * 1.5);
+    }
+  }
+
+  td.large-@{counter} center,
+  th.large-@{counter} center {
+    min-width: -zf-grid-calc-px(@counter, @grid-column-count, @global-width, @global-gutter) - (@global-gutter * 2);
+  }
+
+  .body .columns td.large-@{counter},
+  .body .column td.large-@{counter},
+  .body .columns th.large-@{counter},
+  .body .column th.large-@{counter} {
+    width: -zf-grid-calc-pct(@counter, @grid-column-count);
+  }
+
+  .allColsGrid((@counter - 1));
+}
+
+.allColsGridMinusOne(@counter) when (@counter > 0) {
+  td.large-offset-@{counter},
+  td.large-offset-@{counter}.first,
+  td.large-offset-@{counter}.last,
+  th.large-offset-@{counter},
+  th.large-offset-@{counter}.first,
+  th.large-offset-@{counter}.last {
+    //1.5 takes in effect a whole empty cell.
+    padding-left: -zf-grid-calc-px(@counter, @grid-column-count, @global-width, @global-gutter) + @global-gutter * 2;
+  }
+  .allColsGridMinusOne((@counter - 1));
+}
+
+.allColsGrid(@grid-column-count);
+.allColsGridMinusOne((@grid-column-count - 1));
+
+td.expander,
+th.expander {
+  visibility: hidden;
+  width: 0;
+  padding: 0 !important;
+}
+
+// adds radius to container
+table.container.radius {
+  border-radius: @container-radius;
+  border-collapse: separate;
+}

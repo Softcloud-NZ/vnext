@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js" integrity="sha512-BrvVYNhKh6yST24E5DY/LopLO5d+8KYmIXyrpBIJ2PK+CyyJw/cLSG/BfJomWLC1IblNrmiJWGlrGueKLd/Ekw==" crossorigin="anonymous"></script>
+  <script src="/assets/smooth-scrollbar.js"></script>
+  <style type="text/css"></style>
+  <style>
+    html.mobile, html.mobile body {
+      height: 100%;
+    }
+    html.mobile div.body {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      width: 100%;
+    }
+  </style>
+  <script>
+    function elementsAtLocation (x, y) {
+      if (document.elementsFromPoint) {
+        return document.elementsFromPoint(x, y);
+      } else if (document.msElementsFromPoint) {
+        return document.msElementsFromPoint(x, y);
+      } else {
+        return [];
+      }
+    }
+
+    var scrollBar = false;
+    setViewMode = function (mode) {
+      const isMobile = mode === 'mobile';
+      if (scrollBar) {
+        Scrollbar.destroyAll();
+      }
+      const html = document.getElementsByTagName('html')[0];
+      if (isMobile) {
+        if (!html.classList.contains('mobile')) {
+          html.classList.add('mobile');
+        }
+        Scrollbar.init($('div.body')[0], {alwaysShowTracks: false});
+        scrollBar = true;
+      } else {
+        html.classList.remove('mobile');
+        scrollBar = false;
+      }
+    }
+    document.setViewMode = setViewMode;
+
+    document.loadPreview = function(html, fonts, mode){
+      const htmlDoc = new DOMParser().parseFromString(html, "text/html");
+      const body = htmlDoc.querySelector('body');
+      const style = htmlDoc.querySelector('style');
+      $($('style')[0]).replaceWith(style.outerHTML);
+      $('#fonts').remove();
+      $('head').append(fonts);
+      const $body = $('body');
+      $body.html(body.innerHTML).attr('style', body.getAttribute('style'));
+      $('table.body').wrap('<div class="body">');
+      setViewMode(mode);
+      $('a').on('click', function (e) {
+        e.preventDefault();
+      });
+      $body.on('mousemove', function (e) {
+        if (document.link.onMouseMove) {
+          document.link.onMouseMove(e);
+        }
+      });
+      $body.on('click', function (e) {
+        if (document.link.onMouseClick) {
+          const els = elementsAtLocation(e.clientX, e.clientY);
+          const el = els.find(function(x) {
+            return !!(x.getAttribute('data-pos'));
+          });
+          const dataPos = (el) ? el.getAttribute('data-pos') : null;
+          document.link.onMouseClick(e, dataPos);
+        }
+      });
+    }
+
+    Zepto(function($){
+      // console.log('loaded');
+    })
+  </script>
+</head>
+<body></body>
+</html>
